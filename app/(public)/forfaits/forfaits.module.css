@@ -1,0 +1,265 @@
+.intro {
+  padding: 92px 0 54px;
+  text-align: center;
+}
+
+.intro h1 {
+  margin: 19px auto 22px;
+  font-family: var(--font-outfit), sans-serif;
+  font-size: clamp(39px, 5vw, 65px);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -0.05em;
+}
+
+.intro h1 > span {
+  color: var(--brand-dark);
+}
+
+.intro p {
+  max-width: 510px;
+  margin: 0 auto;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.85;
+}
+
+.modes {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 11px;
+  margin-top: 26px;
+}
+
+.modes span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 11px;
+  border-radius: 5px;
+  background: var(--brand-light);
+  color: var(--brand-dark);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.modes span:last-child {
+  color: var(--remote);
+  background: color-mix(in srgb, var(--remote) 8%, var(--bg));
+}
+
+.packages {
+  padding: 24px 0 78px;
+}
+
+.pricingHeader {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 22px;
+}
+
+.pricingHeader p {
+  margin: 0;
+  font-family: var(--font-outfit), sans-serif;
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.pricingHeader > span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.disclaimer {
+  max-width: 640px;
+  margin: 26px auto 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.8;
+  text-align: center;
+}
+
+.included {
+  padding: 64px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: var(--sand);
+}
+
+.includedInner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 70px;
+}
+
+.included h2,
+.faq h2,
+.contact h2 {
+  margin: 13px 0 0;
+  font-family: var(--font-outfit), sans-serif;
+  font-size: clamp(28px, 3vw, 38px);
+  font-weight: 600;
+  line-height: 1.16;
+  letter-spacing: -0.04em;
+}
+
+.included ul {
+  display: grid;
+  gap: 19px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.included li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+.included li svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: var(--brand-dark);
+}
+
+.faq {
+  padding: 90px 0;
+}
+.faqInner {
+  display: grid;
+  grid-template-columns: 0.8fr 1.2fr;
+  gap: 90px;
+}
+.faqHeading p {
+  max-width: 260px;
+  margin: 19px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.8;
+}
+.questions {
+  border-top: 1px solid var(--line);
+}
+.questions details {
+  border-bottom: 1px solid var(--line);
+}
+
+.questions summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  min-height: 72px;
+  padding: 21px 0;
+  font-family: var(--font-outfit), sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.5;
+  cursor: pointer;
+  list-style: none;
+}
+
+.questions summary::-webkit-details-marker {
+  display: none;
+}
+.questions summary svg {
+  flex-shrink: 0;
+  color: var(--muted);
+  transition: transform 160ms ease;
+}
+.questions details[open] summary svg {
+  transform: rotate(45deg);
+}
+.questions details p {
+  margin: -3px 35px 24px 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.9;
+}
+
+.contact {
+  padding: 53px 0;
+  background: var(--brand-light);
+}
+.contactInner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+}
+.contact h2 {
+  max-width: 580px;
+  font-size: clamp(26px, 3vw, 34px);
+}
+.contact p {
+  margin: 13px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.8;
+}
+.contact a {
+  flex-shrink: 0;
+}
+
+@media (max-width: 760px) {
+  .intro {
+    padding: 60px 0 35px;
+  }
+  .intro h1 {
+    font-size: clamp(34px, 8vw, 52px);
+  }
+  .intro p {
+    font-size: 14px;
+  }
+  .pricingHeader {
+    margin-bottom: 24px;
+  }
+  .pricingHeader > span {
+    width: 100%;
+  }
+  .packages {
+    padding-bottom: 55px;
+  }
+  .included {
+    padding: 45px 0;
+  }
+  .includedInner {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  .included ul {
+    gap: 15px;
+  }
+  .faq {
+    padding: 56px 0;
+  }
+  .faqInner {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  .faqHeading p {
+    max-width: 100%;
+  }
+  .questions summary {
+    font-size: 14px;
+  }
+  .contactInner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .questions summary svg {
+    transition: none;
+  }
+}

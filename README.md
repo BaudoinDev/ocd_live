@@ -1,36 +1,38 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# OCD Live
 
-## Getting Started
+Site public de démonstration de l’agence OCD à Lomé : présentation des promotions TikTok Live, participation en présentiel ou à distance et catalogue des forfaits. Seule la **phase 1** est implémentée.
 
-First, run the development server:
+## Démarrer
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+```powershell
+npm.cmd install
+npm.cmd run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Ouvrir `http://localhost:3000`. Les pages disponibles sont `/` et `/forfaits`. « Comment ça marche » et « Contact » pointent vers `/#comment-ca-marche` et `/#contact` ; ces sections n’ont pas de route distincte.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Vérifier
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```powershell
+npm.cmd run lint
+npx.cmd tsc --noEmit
+npm.cmd run build
+npx.cmd playwright test
+```
 
-## Learn More
+Playwright utilise Google Chrome installé localement (`channel: "chrome"`) et démarre le serveur de développement si nécessaire. Les tests couvrent les deux pages à 375, 768 et 1440 px, la navigation mobile, le clavier, les fenêtres d’information et les forfaits. Ils ne remplacent pas un audit complet d’accessibilité.
 
-To learn more about Next.js, take a look at the following resources:
+## Périmètre
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Les boutons de connexion et de réservation ouvrent une explication de l’aperçu. Aucun compte, réservation, paiement ou donnée `localStorage` n’est créé. Les six tarifs sont provisoires. La photographie est une illustration générée par IA, pas une cliente réelle.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Le logo officiel est `public/images/Orange OCD Live Logo.png`. La palette et les polices suivent la charte fournie. Voir [les choix de la phase 1](docs/phase-1.md), les [polices et licences](public/fonts/README.md) et les offres dans `lib/packages.ts`.
 
-## Deploy on Vercel
+## Préparer Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Pousser ce dépôt dans le service Git de votre choix.
+2. Importer le dépôt dans Vercel et conserver le préréglage **Next.js**.
+3. Utiliser `npm run build` comme commande de compilation ; conserver le répertoire de sortie par défaut.
+4. Déployer après vérification des pages et des tarifs.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Aucune variable d’environnement, clé API ou base de données n’est nécessaire à cette phase. Aucun déploiement n’est effectué par cette livraison. Les phases 2 à 6 attendent la validation du commanditaire.
