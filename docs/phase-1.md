@@ -33,7 +33,7 @@ L’orange profond `#C24D00`, déjà présent dans la charte, porte les boutons 
 
 Outfit est utilisé pour les titres, prix et boutons, principalement en **600 et 800**. DM Sans est utilisé pour le texte courant en **400, 500 et 700**. Les fichiers variables officiels sont auto-hébergés dans `public/fonts` et chargés par `next/font/local` : aucune requête Google Fonts à l’affichage. Les licences SIL Open Font License 1.1 et les sources sont conservées à côté des fichiers.
 
-Le logo réel `public/images/Orange OCD Live Logo.png` conserve ses proportions et ses couleurs. `public/images/live-studio.webp` est une image générée par IA et indiquée comme illustrative dans l’accueil. Elle ne représente pas une cliente ni une séance réelle. Aucun résultat commercial ou témoignage fictif n’est présenté comme authentique.
+Le logo officiel `public/images/ocd-logo.png` conserve ses proportions et ses couleurs ; il est recadré sur fond transparent. `public/images/live-studio.webp` est une image générée par IA et indiquée comme illustrative dans l’accueil. Elle ne représente pas une cliente ni une séance réelle. Aucun résultat commercial ou témoignage fictif n’est présenté comme authentique.
 
 ## Architecture
 

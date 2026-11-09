@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   description:
     "Donnez de la visibilité à votre entreprise avec les promotions TikTok Live d’OCD. À l’agence de Lomé ou à distance, mettez votre activité au premier plan.",
   applicationName: "OCD Live",
-  icons: { icon: "/images/Orange%20OCD%20Live%20Logo.png" },
+  icons: { icon: "/images/ocd-icon.png" },
   openGraph: {
     locale: "fr_FR",
     type: "website",

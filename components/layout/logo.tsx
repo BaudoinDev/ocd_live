@@ -10,11 +10,11 @@ export function Logo({ footer = false }: { footer?: boolean }) {
       aria-label="OCD Live, accueil"
     >
       <Image
-        src="/images/Orange%20OCD%20Live%20Logo.png"
+        src="/images/ocd-logo.png"
         alt="OCD Live"
-        width={1672}
-        height={941}
-        sizes="148px"
+        width={990}
+        height={381}
+        sizes="124px"
         preload={!footer}
       />
     </Link>

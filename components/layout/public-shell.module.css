@@ -33,18 +33,8 @@
   align-items: center;
   gap: 30px;
 }
-.logo {
-  display: flex;
-  align-items: center;
-  width: 132px;
-  flex-shrink: 0;
-  margin-left: -18px;
-}
-.logo img {
-  display: block;
-  width: 132px;
-  height: auto;
-}
+.logo { display: flex; align-items: center; width: 118px; flex-shrink: 0; }
+.logo img { display: block; width: 118px; height: auto; }
 .desktopNav {
   display: flex;
   align-items: center;
@@ -122,15 +112,8 @@
   gap: 64px;
   padding-bottom: 58px;
 }
-.footerLogo {
-  background: var(--bg);
-  border-radius: 7px;
-  width: 119px;
-  margin: 0 0 20px;
-}
-.footerLogo img {
-  width: 119px;
-}
+.footerLogo { width: 110px; margin: 0 0 20px; }
+.footerLogo img { width: 110px; }
 .footerBrand p {
   font-size: 13px;
   opacity: 0.7;
@@ -233,10 +216,7 @@
   .headerInner {
     min-height: 76px;
   }
-  .logo,
-  .logo img {
-    width: 122px;
-  }
+  .logo, .logo img { width: 104px; }
   .footerMain {
     gap: 32px;
   }
