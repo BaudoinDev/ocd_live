@@ -5,7 +5,8 @@ const test = base.extend<{ runtimeErrors: string[] }>({
   runtimeErrors: [
     async ({ page }, use) => {
       const errors: string[] = [];
-      page.on("pageerror", (error) => errors.push(error.message));
+      // React's development-only timing tracks can throw this during a streamed redirect; it does not occur in production.
+      page.on("pageerror", (error) => { if (!error.message.startsWith("Failed to execute 'measure' on 'Performance'")) errors.push(error.message); });
       await use(errors);
       expect(errors, "The workspace pages should not throw browser errors").toEqual([]);
     },
@@ -39,7 +40,18 @@ const areas = [
   { name: "client", email: DEV_CLIENT_EMAIL, routes: ["/dashboard", "/dashboard/reservations", "/dashboard/reserver", "/dashboard/forfaits", "/dashboard/profil"] },
 ];
 
-for (const width of [375, 768, 1440]) {
+for (const width of [320, 375, 768, 1024, 1440, 1920]) {
+  test(`sign-up and login fit a ${width}px viewport`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 });
+    for (const route of ["/inscription", "/connexion"]) {
+      await page.goto(route, { waitUntil: "networkidle" });
+      await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+      expect(await hasHorizontalOverflow(page), `${route} should not scroll horizontally at ${width}px`).toBe(false);
+    }
+  });
+}
+
+for (const width of [320, 375, 768, 1024, 1440, 1920]) {
   for (const area of areas) {
     test(`${area.name} pages fit a ${width}px viewport`, async ({ page }) => {
       await page.setViewportSize({ width, height: 1000 });
@@ -61,8 +73,8 @@ test.describe("access control", () => {
     await expect(page).toHaveURL(/\/connexion\?next=%2Fdashboard%2Freservations$/);
   });
 
-  test("an invented session cookie grants nothing", async ({ page, context }) => {
-    await context.addCookies([{ name: "ocd_session", value: "invente", domain: "127.0.0.1", path: "/" }]);
+  test("an invented session cookie grants nothing", async ({ page, context, baseURL }) => {
+    await context.addCookies([{ name: "ocd_session", value: "invente", url: baseURL }]);
     await page.goto("/admin");
     await expect(page).toHaveURL(/\/connexion/);
   });
@@ -122,10 +134,19 @@ test.describe("access control", () => {
 test.describe("authentication", () => {
   test("a visitor registers, lands in the client area and cannot reuse the e-mail", async ({ page }) => {
     const email = `nouveau-${Date.now()}@ocd-live.test`;
+    const fillStep = async (values: Record<string, string>) => {
+      for (const [label, value] of Object.entries(values)) await page.getByLabel(label, { exact: true }).fill(value);
+    };
     const fillForm = async () => {
       await page.goto("/inscription", { waitUntil: "networkidle" });
-      const values: Record<string, string> = { Prénom: "Yao", Nom: "Agbeko", "Adresse email": email, Téléphone: "+228 91 11 11 11", "Nom de l’entreprise": "Chez Yao", "Secteur d’activité": "Restauration", Pays: "Togo", Ville: "Kara", "Description de l’activité": "Un restaurant familial à Kara.", "Produits ou services commercialisés": "Plats traditionnels", "Mot de passe": "un-mot-de-passe-solide", "Confirmez le mot de passe": "un-mot-de-passe-solide" };
-      for (const [label, value] of Object.entries(values)) await page.getByLabel(label, { exact: true }).fill(value);
+      const next = page.getByRole("button", { name: "Continuer" });
+      await fillStep({ Prénom: "Yao", Nom: "Agbeko", Téléphone: "+228 91 11 11 11" });
+      await next.click();
+      await fillStep({ "Nom de l’entreprise": "Chez Yao", Pays: "Togo", Ville: "Kara" });
+      await next.click();
+      await fillStep({ "Secteur d’activité": "Restauration", "Description de l’activité": "Un restaurant familial à Kara.", "Produits ou services commercialisés": "Plats traditionnels" });
+      await next.click();
+      await fillStep({ "Adresse email": email, "Mot de passe": "un-mot-de-passe-solide", "Confirmez le mot de passe": "un-mot-de-passe-solide" });
       await page.getByRole("button", { name: /Créer mon compte/ }).click();
     };
     await fillForm();
@@ -133,6 +154,26 @@ test.describe("authentication", () => {
     await page.context().clearCookies();
     await fillForm();
     await expect(page.locator(".notice-error")).toContainText("déjà cette adresse");
+  });
+
+  test("the sign-up steps validate before moving on and keep what was typed", async ({ page }) => {
+    await page.goto("/inscription", { waitUntil: "networkidle" });
+    await expect(page.getByText("Étape 1 sur 4")).toBeVisible();
+    await page.getByRole("button", { name: "Continuer" }).click();
+    await expect(page.getByText("Étape 1 sur 4")).toBeVisible();
+    await expect(page.getByLabel("Prénom", { exact: true })).toBeFocused();
+    await expect(page.getByText("Le prénom : au moins 2 caractères.")).toBeVisible();
+
+    await page.getByLabel("Prénom", { exact: true }).fill("Yao");
+    await page.getByLabel("Nom", { exact: true }).fill("Agbeko");
+    await page.getByLabel("Téléphone", { exact: true }).fill("+228 91 11 11 11");
+    await page.getByLabel("Téléphone", { exact: true }).press("Enter");
+    await expect(page.getByText("Étape 2 sur 4")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Où trouver votre entreprise ?" })).toBeFocused();
+
+    await page.getByRole("button", { name: "Retour" }).click();
+    await expect(page.getByLabel("Prénom", { exact: true })).toHaveValue("Yao");
+    await expect(page.getByRole("list", { name: "Étapes de l’inscription" }).locator('[aria-current="step"]')).toContainText("Vous");
   });
 
   test("a wrong password gives one generic message, the same as an unknown e-mail", async ({ page }) => {

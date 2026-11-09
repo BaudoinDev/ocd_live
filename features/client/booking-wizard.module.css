@@ -3,7 +3,7 @@
 .step { margin: 0; min-width: 0; }
 /* float + full width takes the <legend> out of the fieldset border, so it sits inside the card. */
 .legend { float: left; width: 100%; display: flex; align-items: center; gap: 10px; padding: 0; margin-bottom: 18px; font-family: var(--font-outfit), sans-serif; font-size: 18px; font-weight: 600; }
-.legend > span { width: 28px; height: 28px; display: inline-grid; place-items: center; flex: none; border-radius: 7px; color: var(--brand-dark); background: var(--brand-light); font-size: 12px; }
+.legend > span { width: 28px; height: 28px; display: inline-grid; place-items: center; flex: none; border-radius: 7px; color: var(--brand-dark); background: var(--brand-light); font-size: 14px; }
 
 .offers { clear: both; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
 .modes { clear: both; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
@@ -12,8 +12,8 @@
 .choiceBody { display: grid; gap: 3px; height: 100%; padding: 14px; border: 1px solid var(--line); border-radius: 9px; transition: border-color .15s, background .15s; }
 .choiceBody svg { color: var(--brand-dark); margin-bottom: 4px; }
 .choiceBody strong { font-weight: 600; font-size: 14px; }
-.choiceBody small { color: var(--muted); font-size: 12px; line-height: 1.5; }
-.choiceBody em { font-style: normal; font-size: 13px; font-weight: 600; color: var(--brand-dark); margin-top: 4px; }
+.choiceBody small { color: var(--muted); font-size: 14px; line-height: 1.5; }
+.choiceBody em { font-style: normal; font-size: 15px; font-weight: 600; color: var(--brand-dark); margin-top: 4px; }
 .choice:hover .choiceBody { border-color: var(--brand); }
 .choice input:checked + .choiceBody { border-color: var(--brand-dark); box-shadow: inset 0 0 0 1px var(--brand-dark); background: var(--brand-light); }
 .choice input:focus-visible + .choiceBody { outline: 2px solid var(--info); outline-offset: 2px; }
@@ -22,7 +22,7 @@
 .monthBar { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 12px; }
 .monthBar h3 { font-size: 17px; text-transform: capitalize; text-align: center; }
 .weekdays, .days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
-.weekdays { text-align: center; font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+.weekdays { text-align: center; font-size: 13px; color: var(--muted); margin-bottom: 4px; }
 .day { min-width: 0; height: 44px; border: 1px solid var(--line); border-radius: 7px; background: var(--bg); font-size: 14px; font-weight: 500; transition: border-color .15s, background .15s; }
 .day:hover:not(:disabled) { border-color: var(--brand); background: var(--brand-light); }
 .day:disabled { border-color: transparent; background: transparent; color: color-mix(in srgb, var(--muted) 45%, white); cursor: not-allowed; }
@@ -33,19 +33,19 @@
 .slots h3 { font-size: 15px; margin-bottom: 12px; }
 .slots h3::first-letter { text-transform: uppercase; }
 .slotGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-.slotGrid button { min-height: 44px; padding: 6px; border: 1px solid var(--line); border-radius: 7px; background: var(--bg); font-size: 13px; transition: border-color .15s, background .15s; }
+.slotGrid button { min-height: 44px; padding: 6px; border: 1px solid var(--line); border-radius: 7px; background: var(--bg); font-size: 15px; transition: border-color .15s, background .15s; }
 .slotGrid button:hover:not(:disabled) { border-color: var(--brand-dark); background: var(--brand-light); }
 .slotGrid button:disabled { opacity: .45; cursor: not-allowed; }
-.slotHint { color: var(--muted); font-size: 13px; line-height: 1.6; margin-top: 8px; }
+.slotHint { color: var(--muted); font-size: 15px; line-height: 1.6; margin-top: 8px; }
 
 .summary { position: sticky; top: 92px; margin: 0; display: grid; gap: 6px; }
 .summary h2 { font-size: 23px; }
 .price { font-family: var(--font-outfit), sans-serif; font-size: 28px; font-weight: 600; }
-.price small { font-size: 13px; font-weight: 400; color: var(--muted); }
-.summaryLine { font-size: 13px; color: var(--muted); }
-.summaryTitle { font-size: 13px; font-weight: 600; margin-top: 12px; padding-top: 14px; border-top: 1px solid var(--line); }
+.price small { font-size: 15px; font-weight: 400; color: var(--muted); }
+.summaryLine { font-size: 15px; color: var(--muted); }
+.summaryTitle { font-size: 15px; font-weight: 600; margin-top: 12px; padding-top: 14px; border-top: 1px solid var(--line); }
 .selected { list-style: none; padding: 0; margin: 6px 0 0; display: grid; gap: 6px; max-height: 300px; overflow-y: auto; }
-.selected li { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px 6px 8px 12px; background: var(--sand); border-radius: 7px; font-size: 12px; line-height: 1.6; }
+.selected li { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px 6px 8px 12px; background: var(--sand); border-radius: 7px; font-size: 14px; line-height: 1.6; }
 .selected li small { display: block; color: var(--err); }
 .selected button { display: grid; place-items: center; flex: none; width: 44px; height: 44px; border: 0; border-radius: 6px; background: transparent; }
 .selected button:hover { background: var(--line); }

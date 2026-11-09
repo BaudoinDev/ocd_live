@@ -10,7 +10,8 @@ export default defineConfig({
   reporter: "list",
   outputDir: "test-results",
   use: {
-    baseURL: "http://127.0.0.1:3000",
+    // localhost, not 127.0.0.1: Next.js blocks dev resources from another origin, so an already running `npm run dev` would never hydrate.
+    baseURL: "http://localhost:3000",
     browserName: "chromium",
     channel: "chrome",
     headless: true,
@@ -19,8 +20,8 @@ export default defineConfig({
     screenshot: "only-on-failure",
   },
   webServer: {
-    command: `${process.platform === "win32" ? "npm.cmd" : "npm"} run dev -- --hostname 127.0.0.1`,
-    url: "http://127.0.0.1:3000",
+    command: `${process.platform === "win32" ? "npm.cmd" : "npm"} run dev`,
+    url: "http://localhost:3000",
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
   },

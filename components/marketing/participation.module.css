@@ -25,7 +25,7 @@
   align-items: center;
   padding: 24px;
   gap: 16px;
-  font-size: 9px;
+  font-size: 12px;
   color: var(--muted);
   z-index: 1;
 }
@@ -33,7 +33,7 @@
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 700;
   color: var(--brand-dark);
 }
@@ -71,7 +71,7 @@
   letter-spacing: -0.04em;
 }
 .visualCenter > span {
-  font-size: 11px;
+  font-size: 13px;
   color: var(--muted);
 }
 .visualBottom {
@@ -81,7 +81,7 @@
   padding: 20px 24px;
   border-top: 1px solid rgb(194 77 0 / 12%);
   z-index: 1;
-  font-size: 10px;
+  font-size: 13px;
 }
 .visualBottom > span {
   display: inline-flex;
@@ -130,7 +130,7 @@
   padding: 10px 17px;
   min-height: 44px;
   border-radius: 5px;
-  font-size: 12px;
+  font-size: 14px;
   background: transparent;
   color: var(--muted);
   font-weight: 500;

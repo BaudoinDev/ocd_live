@@ -105,7 +105,7 @@ svg {
   align-items: center;
   gap: 9px;
   color: var(--brand-dark);
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
   line-height: 1.5;
   letter-spacing: 0.16em;
@@ -271,7 +271,7 @@ svg {
   margin-top: 20px;
   padding-top: 16px;
   border-top: 1px solid var(--line);
-  font-size: 12px;
+  font-size: 14px;
   color: var(--muted);
 }
 @keyframes fade-in {

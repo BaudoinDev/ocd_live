@@ -1,35 +1,38 @@
 "use client";
 
 import { useState } from "react";
-import { FormProvider, useForm, useFormContext, type Path, type Resolver } from "react-hook-form";
+import { FormProvider, useForm, useFormContext, type Path } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowRight, Check } from "lucide-react";
+import { ArrowRight, Check, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { ActionResult } from "@/lib/action-result";
 import type { ProfileInput } from "@/types/domain";
-import { emptyProfile, profileSchema, registrationSchema, type RegistrationInput } from "./profile-schema";
+import { profileSchema, type RegistrationInput } from "./profile-schema";
 import styles from "./auth.module.css";
+import wizardStyles from "./registration-wizard.module.css";
 
-type FieldProps = { name: Path<RegistrationInput>; label: string; type?: string; autoComplete?: string; placeholder?: string; multiline?: boolean; optional?: boolean; hint?: string };
+export type FieldProps = { name: Path<RegistrationInput>; label: string; type?: string; autoComplete?: string; placeholder?: string; multiline?: boolean; optional?: boolean; hint?: string; full?: boolean };
 
-function ProfileField({ name, label, type = "text", autoComplete, placeholder, multiline, optional, hint }: FieldProps) {
+export function ProfileField({ name, label, type = "text", autoComplete, placeholder, multiline, optional, hint, full }: FieldProps) {
   const { register, getFieldState, formState } = useFormContext<RegistrationInput>();
+  const [revealed, setRevealed] = useState(false);
   const { error } = getFieldState(name, formState);
   const id = `profile-${name.replaceAll(".", "-")}`;
   const describedBy = [error ? `${id}-error` : "", hint ? `${id}-hint` : ""].filter(Boolean).join(" ") || undefined;
   const props = { id, className: "field-input", "aria-invalid": Boolean(error), "aria-describedby": describedBy, placeholder, ...register(name) };
-  return <div className={`form-field ${multiline ? styles.fullWidth : ""}`}>
+  const password = type === "password";
+  return <div className={`form-field ${multiline || full ? styles.fullWidth : ""}`}>
     <label htmlFor={id}>{label}{optional && <span className={styles.optional}> · facultatif</span>}</label>
-    {multiline ? <textarea {...props} rows={3} /> : <input {...props} type={type} autoComplete={autoComplete} />}
+    {multiline ? <textarea {...props} rows={3} /> : password
+      ? <div className={wizardStyles.passwordWrap}><input {...props} type={revealed ? "text" : "password"} autoComplete={autoComplete} /><button type="button" className={wizardStyles.passwordToggle} aria-label={revealed ? "Masquer ce champ" : "Afficher ce champ"} aria-pressed={revealed} onClick={() => setRevealed(!revealed)}>{revealed ? <EyeOff size={19} aria-hidden="true" /> : <Eye size={19} aria-hidden="true" />}</button></div>
+      : <input {...props} type={type} autoComplete={autoComplete} />}
     {hint && <p id={`${id}-hint`} className="form-hint">{hint}</p>}
     {error && <p id={`${id}-error`} className="form-error" role="alert">{error.message}</p>}
   </div>;
 }
 
-/** On success, registration redirects from the server, so `onSave` only returns for failures or profile edits. */
-export function ProfileForm({ initialValues = emptyProfile, onSave, registration = false }: { initialValues?: ProfileInput; onSave: (values: RegistrationInput) => Promise<ActionResult>; registration?: boolean }) {
-  const schema = registration ? registrationSchema : profileSchema;
-  const form = useForm<RegistrationInput>({ resolver: zodResolver(schema) as unknown as Resolver<RegistrationInput>, defaultValues: { ...initialValues, password: "", passwordConfirm: "" }, mode: "onTouched" });
+export function ProfileForm({ initialValues, onSave }: { initialValues: ProfileInput; onSave: (values: ProfileInput) => Promise<ActionResult> }) {
+  const form = useForm<ProfileInput>({ resolver: zodResolver(profileSchema), defaultValues: initialValues, mode: "onTouched" });
   const [message, setMessage] = useState("");
   const [submitError, setSubmitError] = useState("");
   const submit = form.handleSubmit(async (values) => {
@@ -37,7 +40,7 @@ export function ProfileForm({ initialValues = emptyProfile, onSave, registration
     setMessage("");
     const result = await onSave(values);
     if (!result.ok) setSubmitError(result.error);
-    else if (!registration) setMessage("Votre profil a bien été enregistré.");
+    else setMessage("Votre profil a bien été enregistré.");
   });
   return <FormProvider {...form}>
     <form method="post" onSubmit={submit} noValidate className={styles.profileForm}>
@@ -62,18 +65,10 @@ export function ProfileForm({ initialValues = emptyProfile, onSave, registration
           <ProfileField name="business.tiktok" label="Nom d’utilisateur TikTok" optional placeholder="@monentreprise" hint="Utile pour préparer une participation à distance." />
         </div>
       </fieldset>
-      {registration && <fieldset className={styles.fieldset}>
-        <legend className={styles.legend}><span>03</span> Votre mot de passe</legend>
-        <div className="form-grid">
-          <ProfileField name="password" label="Mot de passe" type="password" autoComplete="new-password" hint="10 caractères minimum." />
-          <ProfileField name="passwordConfirm" label="Confirmez le mot de passe" type="password" autoComplete="new-password" />
-        </div>
-      </fieldset>}
       {submitError && <div role="alert" className="notice notice-error">{submitError}</div>}
       {message && <div role="status" className="notice notice-success"><Check size={18} aria-hidden="true" /> {message}</div>}
       <div className={`form-actions ${styles.formActions}`}>
-        {registration && <p className="form-hint">Tous les champs sont requis, sauf le nom TikTok.</p>}
-        <Button type="submit" disabled={form.formState.isSubmitting}>{form.formState.isSubmitting ? "Enregistrement…" : registration ? "Créer mon compte" : "Enregistrer les modifications"}<ArrowRight size={17} aria-hidden="true" /></Button>
+        <Button type="submit" disabled={form.formState.isSubmitting}>{form.formState.isSubmitting ? "Enregistrement…" : "Enregistrer les modifications"}<ArrowRight size={17} aria-hidden="true" /></Button>
       </div>
     </form>
   </FormProvider>;

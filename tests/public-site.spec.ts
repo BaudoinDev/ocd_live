@@ -16,7 +16,7 @@ const test = base.extend<{ runtimeErrors: string[] }>({
   ],
 });
 
-for (const width of [375, 768, 1440]) {
+for (const width of [320, 375, 768, 1024, 1440, 1920]) {
   for (const route of ["/", "/forfaits"]) {
     test(`${route} fits a ${width}px viewport and loads the supplied logo`, async ({
       page,

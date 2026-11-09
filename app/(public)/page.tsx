@@ -52,7 +52,7 @@ const steps = [
   {
     icon: CalendarDays,
     title: "Préparez votre rendez-vous.",
-    text: "Choisissez votre mode de participation et préparez vos produits. Le parcours de réservation en ligne arrive bientôt.",
+    text: "Choisissez votre mode de participation et préparez vos produits. Réservez ensuite le créneau qui vous convient, directement en ligne.",
   },
   {
     icon: Radio,
