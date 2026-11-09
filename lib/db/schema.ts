@@ -4,6 +4,7 @@ import { boolean, check, date, index, integer, pgEnum, pgTable, smallint, text, 
 export const userRole = pgEnum("user_role", ["client", "admin"]);
 export const participationMode = pgEnum("participation_mode", ["agency", "remote"]);
 export const bookingStatus = pgEnum("booking_status", ["pending", "confirmed", "cancelled", "completed"]);
+export const paymentMethod = pgEnum("payment_method", ["mobile_money", "card"]);
 
 export const users = pgTable("users", {
   id: uuid().primaryKey().defaultRandom(),
@@ -69,6 +70,8 @@ export const bookings = pgTable("bookings", {
   durationHours: smallint("duration_hours").notNull(),
   sessionCount: smallint("session_count").notNull(),
   mode: participationMode().notNull(),
+  // Null for bookings made before payment choice existed.
+  paymentMethod: paymentMethod("payment_method"),
   status: bookingStatus().notNull().default("pending"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 }, (table) => [

@@ -12,6 +12,7 @@ import { allSessionsEnded, validateBookingSessions } from "@/lib/booking-rules";
 import { selectOccupiedSlots } from "@/lib/data/workspace";
 import { db } from "@/lib/db";
 import { bookings, bookingSessions, notifications, packages } from "@/lib/db/schema";
+import { PAYMENT_METHODS } from "@/lib/payment";
 import { consumeRateLimit } from "@/lib/rate-limit";
 import type { BookingStatus } from "@/types/domain";
 
@@ -21,6 +22,8 @@ const SESSION_EXPIRED = "Votre session a expiré. Reconnectez-vous.";
 const bookingInput = z.object({
   packageId: z.string().min(1).max(60),
   mode: z.enum(["agency", "remote"]),
+  // Recorded as chosen; by design, no payment is verified or taken.
+  paymentMethod: z.enum(PAYMENT_METHODS),
   sessions: z.array(z.object({ date: z.string().max(10), startHour: z.number().int(), durationHours: z.number().int() })).min(1).max(31),
 });
 
@@ -36,7 +39,7 @@ export async function createBookingAction(input: unknown): Promise<ActionResult<
   if (user.role !== "client") return failure("Utilisez un compte client pour réserver un live.");
   const parsed = bookingInput.safeParse(input);
   if (!parsed.success) return failure("Vérifiez le forfait, le mode de participation et les créneaux choisis.");
-  const { packageId, mode, sessions } = parsed.data;
+  const { packageId, mode, sessions, paymentMethod } = parsed.data;
   const id = newReference();
   try {
     if (!await consumeRateLimit(`booking:${user.id}`, 20, 3_600)) return failure("Trop de réservations en peu de temps. Réessayez plus tard ou contactez l’agence.");
@@ -46,11 +49,11 @@ export async function createBookingAction(input: unknown): Promise<ActionResult<
     const invalid = validateBookingSessions(sessions, offer, await selectOccupiedSlots());
     if (invalid) return failure(invalid);
     await db.batch([
-      db.insert(bookings).values({ id, userId: user.id, packageId: offer.id, packageName: offer.name, price: offer.price, durationHours: offer.durationHours, sessionCount: offer.sessionCount, mode }),
+      db.insert(bookings).values({ id, userId: user.id, packageId: offer.id, packageName: offer.name, price: offer.price, durationHours: offer.durationHours, sessionCount: offer.sessionCount, mode, paymentMethod }),
       db.insert(bookingSessions).values(sessions.map((session) => ({ ...session, bookingId: id }))),
       db.insert(notifications).values({ bookingId: id, title: "Nouvelle réservation", message: `${user.business.companyName} souhaite réserver le forfait ${offer.name}.` }),
     ]);
-    after(() => sendManagerAlert({ reference: id, packageName: offer.name, price: offer.price, mode, sessions, client: user }));
+    after(() => sendManagerAlert({ reference: id, packageName: offer.name, price: offer.price, mode, paymentMethod, sessions, client: user }));
   } catch (error) {
     // Two clients can pass the check above at once; the database constraint decides who gets the slot.
     return failure(databaseErrorCode(error) === EXCLUSION_VIOLATION ? SLOT_TAKEN : UNEXPECTED_ERROR);

@@ -1,5 +1,6 @@
 import "server-only";
 import { formatDate, hourLabel } from "@/lib/booking-rules";
+import { paymentLabels, type PaymentMethod } from "@/lib/payment";
 import type { ParticipationMode, SessionSelection, User } from "@/types/domain";
 
 export interface BookingAlert {
@@ -7,11 +8,12 @@ export interface BookingAlert {
   packageName: string;
   price: number;
   mode: ParticipationMode;
+  paymentMethod: PaymentMethod;
   sessions: readonly SessionSelection[];
   client: User;
 }
 
-export function buildAlertText({ reference, packageName, price, mode, sessions, client }: BookingAlert): string {
+export function buildAlertText({ reference, packageName, price, mode, paymentMethod, sessions, client }: BookingAlert): string {
   return [
     `Nouvelle réservation ${reference}`,
     "",
@@ -19,6 +21,7 @@ export function buildAlertText({ reference, packageName, price, mode, sessions, 
     `Contact : ${client.firstName} ${client.lastName} · ${client.phone} · ${client.email}`,
     `Forfait : ${packageName} · ${price} FCFA`,
     `Participation : ${mode === "agency" ? "à l’agence de Lomé" : "à distance en co-host TikTok"}`,
+    `Moyen de paiement choisi : ${paymentLabels[paymentMethod]}`,
     "",
     "Séances (heure de Lomé) :",
     ...sessions.map((session) => `- ${formatDate(session.date)}, ${hourLabel(session.startHour)} à ${hourLabel(session.startHour + session.durationHours)}`),

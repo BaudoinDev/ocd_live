@@ -1,0 +1,25 @@
+.dialog { width: min(560px, calc(100% - 32px)); }
+.options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 24px; }
+.option { display: grid; justify-items: center; align-content: center; gap: 6px; min-height: 170px; padding: 22px 14px; border: 1px solid var(--line); border-radius: 14px; background: var(--bg); text-align: center; transition: border-color .2s, background .2s, transform .2s cubic-bezier(.22, 1, .36, 1); }
+.option:hover:not(:disabled) { border-color: var(--brand-dark); background: var(--brand-light); transform: translateY(-2px); }
+.option:disabled { cursor: default; }
+.option:disabled:not(.loading) { opacity: .5; }
+.loading { border-color: var(--brand-dark); background: var(--brand-light); }
+.option strong { font-family: var(--font-outfit), sans-serif; font-size: 19px; font-weight: 600; }
+.option small { color: var(--muted); font-size: 14px; }
+.icon { display: grid; place-items: center; width: 54px; height: 54px; margin-bottom: 4px; border-radius: 14px; color: var(--brand-dark); background: var(--brand-light); }
+.option:hover:not(:disabled) .icon, .loading .icon { background: var(--bg); }
+.spinner { width: 22px; height: 22px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: spin .7s linear infinite; }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+@media (max-width: 420px) {
+  .options { grid-template-columns: 1fr; }
+  .option { min-height: 112px; grid-template-columns: auto minmax(0, 1fr); justify-items: start; column-gap: 14px; row-gap: 0; text-align: left; padding: 16px; }
+  .icon { grid-row: 1 / span 2; margin-bottom: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .option { transition: none; }
+  .option:hover:not(:disabled) { transform: none; }
+  .spinner { animation-duration: 1.6s; }
+}

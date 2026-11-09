@@ -221,7 +221,10 @@ async function pickFirstSlot(page: Page, offer: RegExp) {
   await page.getByRole("button", { name: /^\d\d h – \d\d h$/ }).first().click();
 }
 
-const submitBooking = (page: Page) => page.getByRole("button", { name: /Envoyer ma demande/ }).click();
+const submitBooking = async (page: Page) => {
+  await page.getByRole("button", { name: /Continuer vers le paiement/ }).click();
+  await page.getByRole("dialog").getByRole("button", { name: /Mobile Money/ }).click();
+};
 
 test.describe("booking", () => {
   test("a booking reaches the manager's dashboard, whose open page updates by itself", async ({ page, browser }) => {
@@ -233,7 +236,7 @@ test.describe("booking", () => {
     await login(page, DEV_SECOND_CLIENT_EMAIL);
     await pickFirstSlot(page, /Découverte/);
     await submitBooking(page);
-    await expect(page.getByRole("heading", { name: "Votre demande est enregistrée." })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Votre réservation est enregistrée." })).toBeVisible();
     const reference = (await page.locator("strong", { hasText: /^OCD-/ }).innerText()).trim();
 
     await expect(alert).toBeVisible({ timeout: 40_000 });
@@ -249,7 +252,7 @@ test.describe("booking", () => {
   test("a multi-session offer needs all its slots before it can be sent", async ({ page }) => {
     await login(page, DEV_SECOND_CLIENT_EMAIL);
     await pickFirstSlot(page, /Semaine Starter/);
-    await expect(page.getByRole("button", { name: /Envoyer ma demande/ })).toBeDisabled();
+    await expect(page.getByRole("button", { name: /Continuer vers le paiement/ })).toBeDisabled();
     await expect(page.getByRole("status").filter({ hasText: "Choisissez encore 2 créneaux" })).toBeVisible();
   });
 
@@ -259,10 +262,10 @@ test.describe("booking", () => {
     const rival = await loggedInPage(browser, DEV_SECOND_CLIENT_EMAIL);
     await pickFirstSlot(rival, /Découverte/);
     await submitBooking(rival);
-    await expect(rival.getByRole("heading", { name: "Votre demande est enregistrée." })).toBeVisible();
+    await expect(rival.getByRole("heading", { name: "Votre réservation est enregistrée." })).toBeVisible();
     await submitBooking(page);
     await expect(page.locator(".notice-error")).toContainText(/créneau/i);
-    await expect(page.getByRole("heading", { name: "Votre demande est enregistrée." })).toHaveCount(0);
+    await expect(page.getByRole("heading", { name: "Votre réservation est enregistrée." })).toHaveCount(0);
   });
 });
 

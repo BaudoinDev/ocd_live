@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowRight, CalendarCheck, ChevronLeft, ChevronRight, MapPin, Video, X } from "lucide-react";
@@ -11,6 +11,8 @@ import { createBookingAction } from "@/features/bookings/actions";
 import { addDays, formatDate, getAvailableStartHours, hourLabel, lomeToday, MAX_ADVANCE_DAYS, monthGridDays, moveMonth, sessionStartsAt, sessionsOverlap, TIME_ZONE } from "@/lib/booking-rules";
 import { formatPrice, type PromotionPackage } from "@/lib/packages";
 import type { ParticipationMode, SessionSelection } from "@/types/domain";
+import { paymentLabels, type PaymentMethod } from "@/lib/payment";
+import { PaymentDialog } from "./payment-dialog";
 import styles from "./booking-wizard.module.css";
 
 const modes: { value: ParticipationMode; label: string; detail: string; Icon: typeof MapPin }[] = [
@@ -39,14 +41,17 @@ export function BookingWizard() {
   const [error, setError] = useState("");
   const [reference, setReference] = useState<string | null>(null);
   const [submitting, startSubmit] = useTransition();
+  const paymentButton = useRef<HTMLButtonElement>(null);
+  const [paymentOpen, setPaymentOpen] = useState(false);
+  const [chosenMethod, setChosenMethod] = useState<PaymentMethod | null>(null);
 
   const byId = (id: string | null) => state.packages.find((item) => item.id === id);
   const offer: PromotionPackage | undefined = byId(pickedId) ?? byId(query.get("forfait")) ?? state.packages.find((item) => item.recommended) ?? state.packages[0];
 
   if (reference) return <section className={`panel ${styles.done}`} aria-labelledby="booking-done">
     <span className={styles.doneIcon}><CalendarCheck size={30} aria-hidden="true" /></span>
-    <h1 id="booking-done">Votre demande est enregistrée.</h1>
-    <p>Référence <strong>{reference}</strong>. L’équipe OCD a été alertée et va confirmer votre réservation.</p>
+    <h1 id="booking-done">Votre réservation est enregistrée.</h1>
+    <p>Référence <strong>{reference}</strong>. Paiement validé{chosenMethod ? ` par ${paymentLabels[chosenMethod]}` : ""}. L’équipe OCD a été alertée.</p>
     <div className="dialog-actions"><Button asChild><Link href="/dashboard/reservations">Voir mes réservations<ArrowRight size={17} aria-hidden="true" /></Link></Button></div>
   </section>;
   if (!offer) return <p className="empty-state">Aucun forfait n’est disponible pour le moment.</p>;
@@ -72,13 +77,14 @@ export function BookingWizard() {
     setError("");
     setSessions(offer!.sessionCount === 1 ? [session] : [...sessions, session]);
   }
-  function submit() {
+  function submit(paymentMethod: PaymentMethod) {
+    setChosenMethod(paymentMethod);
     if (!ready || !mode) return;
     setError("");
     startSubmit(async () => {
-      const result = await createBookingAction({ packageId: offer!.id, mode, sessions });
+      const result = await createBookingAction({ packageId: offer!.id, mode, sessions, paymentMethod });
       if (result.ok) setReference(result.value.id);
-      else { setError(result.error); router.refresh(); }
+      else { setError(result.error); setPaymentOpen(false); router.refresh(); }
     });
   }
 
@@ -146,9 +152,10 @@ export function BookingWizard() {
           return <li key={`${session.date}-${session.startHour}`} className={conflict ? styles.conflict : ""}><span>{formatDate(session.date)}<br /><strong>{hourLabel(session.startHour)} – {hourLabel(session.startHour + session.durationHours)}</strong>{conflict && <small>Ce créneau vient d’être pris.</small>}</span><button type="button" aria-label={`Retirer le créneau du ${formatDate(session.date)} à ${hourLabel(session.startHour)}`} onClick={() => setSessions(sessions.filter((item) => item !== session))}><X size={16} aria-hidden="true" /></button></li>;
         })}</ul> : <p className={styles.slotHint}>Aucun créneau choisi.</p>}
         {error && <p role="alert" className="notice notice-error">{error}</p>}
-        <Button className={styles.submit} disabled={!ready || submitting} onClick={submit}>{submitting ? "Envoi…" : "Envoyer ma demande"}<ArrowRight size={17} aria-hidden="true" /></Button>
-        <p className="form-hint" role="status">{missing || "Aucun paiement en ligne : l’équipe OCD vous recontacte pour confirmer."}</p>
+        <Button ref={paymentButton} className={styles.submit} disabled={!ready || submitting} onClick={() => setPaymentOpen(true)}>Continuer vers le paiement<ArrowRight size={17} aria-hidden="true" /></Button>
+        <p className="form-hint" role="status">{missing || "Il ne reste qu’à choisir votre moyen de paiement."}</p>
       </aside>
+      <PaymentDialog open={paymentOpen} onOpenChange={setPaymentOpen} offerName={offer.name} amount={formatPrice(offer.price)} pending={submitting} chosen={chosenMethod} onChoose={submit} returnFocusRef={paymentButton} />
     </div>
   </>;
 }

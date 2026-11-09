@@ -9,6 +9,7 @@ import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, Di
 import { updateBookingStatusAction } from "@/features/bookings/actions";
 import { allSessionsEnded, formatDate, hourLabel, sessionStartsAt, TIME_ZONE } from "@/lib/booking-rules";
 import { formatPrice } from "@/lib/packages";
+import { paymentLabels } from "@/lib/payment";
 import type { Booking, BookingStatus, ParticipationMode, User } from "@/types/domain";
 import styles from "./booking-table.module.css";
 
@@ -136,6 +137,7 @@ function BookingDetails({ booking, sessions, client, admin }: { booking: Booking
         <dl className="booking-details-list">
           <div><dt>Statut</dt><dd>{statusLabels[booking.status]}</dd></div>
           <div><dt>Participation</dt><dd>{modeLabels[booking.mode]}</dd></div>
+          {booking.paymentMethod && <div><dt>Paiement</dt><dd>{paymentLabels[booking.paymentMethod]}</dd></div>}
           <div><dt>Montant</dt><dd>{formatPrice(booking.price)} FCFA</dd></div>
           <div><dt>Demandée le</dt><dd>{createdAtFormat.format(new Date(booking.createdAt))}</dd></div>
           {admin && <>

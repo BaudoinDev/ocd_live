@@ -1,4 +1,5 @@
 import type { PromotionPackage } from "@/lib/packages";
+import type { PaymentMethod } from "@/lib/payment";
 
 export type UserRole = "client" | "admin";
 export type ParticipationMode = "agency" | "remote";
@@ -40,6 +41,7 @@ export interface Booking {
   durationHours: number;
   sessionCount: number;
   mode: ParticipationMode;
+  paymentMethod: PaymentMethod | null;
   status: BookingStatus;
   sessions: BookingSession[];
   createdAt: string;
