@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { ArrowUpRight, CalendarDays, Users, Radio, Clock3, CheckCheck, Wallet } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
@@ -7,20 +8,21 @@ import { useDemo } from "@/components/demo/demo-provider";
 import { BookingTable } from "@/components/demo/booking-table";
 import { StatusBadge } from "@/components/demo/status-badge";
 import { formatPrice } from "@/lib/packages";
-import { formatDate, hourLabel, lomeToday } from "@/lib/demo/booking-rules";
+import { formatDate, hourLabel, sessionStartsAt } from "@/lib/demo/booking-rules";
 import styles from "./admin.module.css";
 
 export function AdminOverview() {
   const { state, user } = useDemo();
+  // Read the clock once per mount: render must stay pure (react-hooks/purity).
+  const [now] = useState(() => Date.now());
   if (!user) return null;
-  const today = lomeToday();
   const pending = state.bookings.filter((booking) => booking.status === "pending");
   const confirmed = state.bookings.filter((booking) => booking.status === "confirmed");
   const completed = state.bookings.filter((booking) => booking.status === "completed");
   const upcoming = state.bookings.filter((booking) => booking.status === "confirmed" || booking.status === "pending")
     .flatMap((booking) => booking.sessions.map((session) => ({ booking, session })))
-    .filter(({ session }) => session.date > today || (session.date === today && new Date(`${session.date}T${String(session.startHour).padStart(2, "0")}:00:00Z`).getTime() > Date.now()))
-    .sort((a, b) => a.session.date.localeCompare(b.session.date) || a.session.startHour - b.session.startHour);
+    .filter(({ session }) => sessionStartsAt(session) > now)
+    .sort((a, b) => sessionStartsAt(a.session) - sessionStartsAt(b.session));
   const scheduled = upcoming.filter(({ booking }) => booking.status === "confirmed").length;
   const turnover = [...confirmed, ...completed].reduce((sum, booking) => sum + booking.price, 0);
   const statusData = [
@@ -50,7 +52,7 @@ export function AdminOverview() {
           {upcoming.length ? <ul className={styles.agenda}>{upcoming.slice(0, 3).map(({ booking, session }) => { const client = state.users.find((item) => item.id === booking.userId); return <li key={session.id} className={styles.agendaItem}><span className={styles.agendaIcon}><CalendarDays size={18} aria-hidden="true" /></span><div className={styles.agendaBody}><strong>{client?.business.companyName || booking.packageName}</strong><p>{formatDate(session.date)} · {hourLabel(session.startHour)}<br />{booking.packageName} · {session.durationHours} h</p><StatusBadge status={booking.status} /></div></li>; })}</ul> : <p className="empty-state">Aucune séance à venir pour le moment.</p>}
         </section>
       </div>
-      <section className="panel"><div className="panel-heading"><div><p className="page-kicker">À traiter</p><h2>Les demandes en attente</h2></div><Link className={styles.textLink} href="/admin/reservations">Tout consulter <ArrowUpRight size={16} aria-hidden="true" /></Link></div><BookingTable bookings={pending.slice(0, 5)} admin /></section>
+      <section className="panel"><div className="panel-heading"><div><p className="page-kicker">À traiter</p><h2>Les demandes en attente</h2></div><Link className={styles.textLink} href="/admin/reservations">Tout consulter <ArrowUpRight size={16} aria-hidden="true" /></Link></div><BookingTable bookings={pending.slice(0, 5)} admin emptyMessage="Aucune demande en attente. Tout est à jour." /></section>
     </div>
   );
 }

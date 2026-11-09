@@ -1,6 +1,6 @@
 import { packages, type PromotionPackage } from "@/lib/packages";
 import type { Booking, BookingStatus, CreateBookingInput, DemoState, ProfileInput, User, UserRole } from "@/types/demo";
-import { validateBookingSessions } from "./booking-rules";
+import { allSessionsEnded, validateBookingSessions } from "./booking-rules";
 import { BookingRepository, NotificationRepository, PackageRepository, UserRepository } from "./repositories";
 import { createSeedState } from "./seed";
 import { DEMO_STORAGE_KEY, LocalStorageDemoAdapter } from "./storage";
@@ -141,7 +141,7 @@ export function createDemoStore() {
         if (user.role !== "admin" && (booking.userId !== user.id || status !== "cancelled")) throw new Error("Vous pouvez uniquement annuler vos propres réservations.");
         const transitions: Record<BookingStatus, readonly BookingStatus[]> = { pending: ["confirmed", "cancelled"], confirmed: ["completed", "cancelled"], cancelled: [], completed: [] };
         if (!transitions[booking.status].includes(status)) throw new Error("Ce changement de statut n’est pas autorisé.");
-        if (status === "completed" && booking.sessions.some((session) => new Date(`${session.date}T${String(session.startHour + session.durationHours).padStart(2, "0")}:00:00Z`).getTime() > Date.now())) throw new Error("Une réservation ne peut être terminée qu’après la fin de toutes ses séances.");
+        if (status === "completed" && !allSessionsEnded(booking.sessions, Date.now())) throw new Error("Une réservation ne peut être terminée qu’après la fin de toutes ses séances.");
         repository.save({ ...booking, status });
       });
     },

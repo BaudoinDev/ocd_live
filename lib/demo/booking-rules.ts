@@ -39,6 +39,26 @@ export function hourLabel(hour: number): string {
   return `${String(hour).padStart(2, "0")} h`;
 }
 
+/** Absolute start instant of a session. Africa/Lome is UTC+0 all year, so the wall-clock hour maps to UTC. */
+export function sessionStartsAt(session: SessionSelection): number {
+  return Date.UTC(...dayParts(session.date), session.startHour);
+}
+
+/** Absolute end instant of a session (start + duration). */
+export function sessionEndsAt(session: SessionSelection): number {
+  return Date.UTC(...dayParts(session.date), session.startHour + session.durationHours);
+}
+
+/** A booking can be marked completed only once every one of its sessions has ended. */
+export function allSessionsEnded(sessions: readonly SessionSelection[], now: number): boolean {
+  return sessions.every((session) => sessionEndsAt(session) <= now);
+}
+
+function dayParts(day: string): [number, number, number] {
+  const [year, month, date] = day.split("-").map(Number);
+  return [year, month - 1, date];
+}
+
 export function sessionsOverlap(a: SessionSelection, b: SessionSelection): boolean {
   return a.date === b.date && a.startHour < b.startHour + b.durationHours && b.startHour < a.startHour + a.durationHours;
 }

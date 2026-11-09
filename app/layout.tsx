@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+// Shared styles for the client and admin workspaces. Kept in the root layout so CSS order stays deterministic across navigations.
+import "./workspace.css";
 
 const outfit = localFont({
   src: "../public/fonts/Outfit-VariableFont_wght.ttf",
