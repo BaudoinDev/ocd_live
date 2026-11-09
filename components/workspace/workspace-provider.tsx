@@ -1,22 +1,18 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, useSyncExternalStore, type ReactNode } from "react";
-import { createDemoStore, type DemoActions, type DemoSnapshot } from "@/lib/demo/store";
-import type { User } from "@/types/demo";
+import { createContext, useContext, type ReactNode } from "react";
+import type { User, WorkspaceState } from "@/types/domain";
 
-type DemoContextValue = DemoSnapshot & { user: User | null; actions: DemoActions };
-const DemoContext = createContext<DemoContextValue | null>(null);
+type WorkspaceValue = { user: User; state: WorkspaceState };
+const WorkspaceContext = createContext<WorkspaceValue | null>(null);
 
-export function DemoProvider({ children }: { children: ReactNode }) {
-  const [store] = useState(createDemoStore);
-  const snapshot = useSyncExternalStore(store.subscribe, store.getSnapshot, store.getServerSnapshot);
-  useEffect(() => store.initialize(), [store]);
-  const user = snapshot.state.users.find((item) => item.id === snapshot.state.sessionUserId) ?? null;
-  return <DemoContext.Provider value={{ ...snapshot, user, actions: store.actions }}>{children}</DemoContext.Provider>;
+/** Holds the data fetched on the server; it is refreshed by the server after every action. */
+export function WorkspaceProvider({ user, state, children }: WorkspaceValue & { children: ReactNode }) {
+  return <WorkspaceContext.Provider value={{ user, state }}>{children}</WorkspaceContext.Provider>;
 }
 
-export function useDemo(): DemoContextValue {
-  const context = useContext(DemoContext);
-  if (!context) throw new Error("useDemo doit être utilisé dans DemoProvider.");
+export function useWorkspace(): WorkspaceValue {
+  const context = useContext(WorkspaceContext);
+  if (!context) throw new Error("useWorkspace doit être utilisé dans WorkspaceProvider.");
   return context;
 }

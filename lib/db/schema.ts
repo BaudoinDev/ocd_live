@@ -35,6 +35,13 @@ export const authSessions = pgTable("auth_sessions", {
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 }, (table) => [index("auth_sessions_user_idx").on(table.userId), index("auth_sessions_expiry_idx").on(table.expiresAt)]);
 
+/** Fixed-window counters. Keys are SHA-256 digests, so no e-mail or IP address is stored here. */
+export const rateLimits = pgTable("rate_limits", {
+  key: text().primaryKey(),
+  count: integer().notNull(),
+  windowStartedAt: timestamp("window_started_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
 export const packages = pgTable("packages", {
   id: text().primaryKey(),
   name: text().notNull(),

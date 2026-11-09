@@ -20,8 +20,8 @@ import {
   Video,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { FeatureNotice } from "@/components/marketing/feature-notice";
-import { PackageGrid } from "@/components/marketing/package-grid";
+import { BookingLink } from "@/components/marketing/booking-link";
+import { PackageCatalog } from "@/components/marketing/package-catalog";
 import { Participation } from "@/components/marketing/participation";
 import { Faq } from "@/components/marketing/faq";
 import styles from "./home.module.css";
@@ -95,10 +95,10 @@ export default function Home() {
               <strong>TikTok Live</strong> d’OCD, à Lomé ou depuis chez vous.
             </p>
             <div className={styles.heroActions}>
-              <FeatureNotice>
+              <BookingLink>
                 Réserver une promotion{" "}
                 <ArrowUpRight size={18} aria-hidden="true" />
-              </FeatureNotice>
+              </BookingLink>
               <Link href="/forfaits" className={styles.heroSecondary}>
                 Voir les forfaits <ArrowRight size={17} aria-hidden="true" />
               </Link>
@@ -303,11 +303,11 @@ export default function Home() {
             ))}
           </div>
           <div className={styles.processCta}>
-            <FeatureNotice variant="dark">
+            <BookingLink variant="dark">
               Préparer mon premier live{" "}
               <ArrowUpRight size={17} aria-hidden="true" />
-            </FeatureNotice>
-            <span>La réservation en ligne sera bientôt disponible.</span>
+            </BookingLink>
+            <span>Choisissez votre forfait et votre créneau en quelques minutes.</span>
           </div>
         </div>
       </section>
@@ -332,10 +332,9 @@ export default function Home() {
           <p className={styles.pricingIntro}>
             Choisissez le temps qu’il vous faut pour raconter votre activité.
           </p>
-          <PackageGrid compact />
+          <PackageCatalog compact />
           <p className={styles.priceNote}>
-            Tarifs provisoires de démonstration, à confirmer par l’agence. Aucun
-            paiement sur ce site.
+            Tarifs provisoires, à confirmer par l’agence. Aucun paiement sur ce site.
           </p>
         </div>
       </section>

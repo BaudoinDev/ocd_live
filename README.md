@@ -1,38 +1,63 @@
 # OCD Live
 
-Site public de démonstration de l’agence OCD à Lomé : présentation des promotions TikTok Live, participation en présentiel ou à distance et catalogue des forfaits. Seule la **phase 1** est implémentée.
+Plateforme de l’agence OCD à Lomé : les entreprises créent un compte, choisissent un forfait de promotion TikTok Live, leur mode de participation (à l’agence ou à distance en co-host) et un créneau libre. Le gérant est alerté à chaque réservation et pilote l’activité depuis son espace.
+
+Stack : Next.js (App Router, Server Actions), PostgreSQL sur Neon, Drizzle ORM, Playwright.
 
 ## Démarrer
 
 ```powershell
 npm.cmd install
+Copy-Item .env.example .env.local   # puis renseigner DATABASE_URL
+npm.cmd run db:migrate
+npm.cmd run db:seed:catalog
 npm.cmd run dev
 ```
 
-Ouvrir `http://localhost:3000`. Les pages disponibles sont `/` et `/forfaits`. « Comment ça marche » et « Contact » pointent vers `/#comment-ca-marche` et `/#contact` ; ces sections n’ont pas de route distincte.
+Ouvrir `http://localhost:3000`.
+
+## Scripts base de données
+
+| Commande | Rôle |
+| --- | --- |
+| `npm run db:generate` | Génère une migration après un changement de `lib/db/schema.ts` |
+| `npm run db:migrate` | Applique les migrations |
+| `npm run db:seed:catalog` | Ajoute les forfaits initiaux, sans écraser l’existant |
+| `npm run db:create-admin` | Crée un compte administrateur (variables `ADMIN_*`, voir le script) |
+| `npm run db:seed:dev` | **Efface** la base et charge des données fictives. Exige `OCD_ALLOW_DB_RESET=true` |
 
 ## Vérifier
 
 ```powershell
 npm.cmd run lint
-npx.cmd tsc --noEmit
+npm.cmd run typecheck
 npm.cmd run build
 npx.cmd playwright test
 ```
 
-Playwright utilise Google Chrome installé localement (`channel: "chrome"`) et démarre le serveur de développement si nécessaire. Les tests couvrent les deux pages à 375, 768 et 1440 px, la navigation mobile, le clavier, les fenêtres d’information et les forfaits. Ils ne remplacent pas un audit complet d’accessibilité.
+**Les tests Playwright effacent la base pointée par `DATABASE_URL`** : ils refusent de démarrer sans `OCD_ALLOW_DB_RESET=true`, à ne définir que sur une base de développement. Ils utilisent Google Chrome installé localement.
 
-## Périmètre
+## Architecture
 
-Les boutons de connexion et de réservation ouvrent une explication de l’aperçu. Aucun compte, réservation, paiement ou donnée `localStorage` n’est créé. Les six tarifs sont provisoires. La photographie est une illustration générée par IA, pas une cliente réelle.
+| Emplacement | Rôle |
+| --- | --- |
+| `lib/db` | Schéma et connexion Neon |
+| `lib/auth` | Mots de passe (scrypt), sessions en base, contrôle d’accès |
+| `lib/data` | Lectures : catalogue public mis en cache, données d’un espace |
+| `lib/booking-rules.ts` | Règles de créneaux, partagées par le navigateur et le serveur |
+| `features/*/actions.ts` | Server Actions ; chacune vérifie elle-même session et droits |
+| `components/workspace` | Contrôle d’accès, navigation et tableau des réservations |
+| `drizzle/` | Migrations |
 
-Le logo officiel est `public/images/Orange OCD Live Logo.png`. La palette et les polices suivent la charte fournie. Voir [les choix de la phase 1](docs/phase-1.md), les [polices et licences](public/fonts/README.md) et les offres dans `lib/packages.ts`.
+Les données d’un client ne contiennent que ses propres lignes. Les chevauchements de créneaux sont refusés par une contrainte d’exclusion PostgreSQL, y compris en cas de requêtes simultanées.
 
-## Préparer Vercel
+## Déployer sur Vercel
 
-1. Pousser ce dépôt dans le service Git de votre choix.
-2. Importer le dépôt dans Vercel et conserver le préréglage **Next.js**.
-3. Utiliser `npm run build` comme commande de compilation ; conserver le répertoire de sortie par défaut.
-4. Déployer après vérification des pages et des tarifs.
+1. Créer une branche Neon de production, distincte de celle de développement.
+2. Y exécuter `db:migrate`, `db:seed:catalog` et `db:create-admin`.
+3. Définir `DATABASE_URL` dans Vercel (nécessaire aussi au build, qui précharge le catalogue) et, pour l’alerte e-mail, `RESEND_API_KEY`, `MANAGER_ALERT_EMAIL` et `ALERT_FROM_EMAIL`.
+4. Ne jamais définir `OCD_ALLOW_DB_RESET` en production.
 
-Aucune variable d’environnement, clé API ou base de données n’est nécessaire à cette phase. Aucun déploiement n’est effectué par cette livraison. Les phases 2 à 6 attendent la validation du commanditaire.
+## Limites actuelles
+
+Pas de paiement en ligne ni d’intégration TikTok. Pas de réinitialisation de mot de passe, qui demande un service d’envoi d’e-mails. L’alerte WhatsApp n’est pas implémentée. Les six tarifs sont provisoires. La photographie de l’accueil est une illustration générée par IA, pas une cliente réelle.

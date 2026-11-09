@@ -1,14 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { Ban, CheckCheck, CircleCheck, Eye } from "lucide-react";
-import { useDemo } from "./demo-provider";
+import { useWorkspace } from "./workspace-provider";
 import { StatusBadge, statusLabels } from "./status-badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { allSessionsEnded, formatDate, hourLabel, sessionStartsAt, TIME_ZONE } from "@/lib/demo/booking-rules";
+import { updateBookingStatusAction } from "@/features/bookings/actions";
+import { allSessionsEnded, formatDate, hourLabel, sessionStartsAt, TIME_ZONE } from "@/lib/booking-rules";
 import { formatPrice } from "@/lib/packages";
-import type { Booking, BookingStatus, ParticipationMode, User } from "@/types/demo";
+import type { Booking, BookingStatus, ParticipationMode, User } from "@/types/domain";
 import styles from "./booking-table.module.css";
 
 const modeLabels: Record<ParticipationMode, string> = { agency: "À l’agence", remote: "À distance" };
@@ -23,7 +24,7 @@ interface BookingTableProps {
 }
 
 export function BookingTable({ bookings, admin = false, emptyMessage = "Aucune réservation à afficher." }: BookingTableProps) {
-  const { state } = useDemo();
+  const { state } = useWorkspace();
   // Captured once per mount: keeps render pure and the "completable" state stable while the table is shown.
   const [now] = useState(() => Date.now());
   if (bookings.length === 0) return <p className="empty-state">{emptyMessage}</p>;
@@ -92,25 +93,22 @@ const actionCopy: Record<Exclude<BookingStatus, "pending">, { label: string; Ico
 };
 
 function StatusAction({ booking, status }: { booking: Booking; status: Exclude<BookingStatus, "pending"> }) {
-  const { actions } = useDemo();
   const [open, setOpen] = useState(false);
   const [error, setError] = useState("");
+  const [pending, startTransition] = useTransition();
   const { label, Icon, confirm } = actionCopy[status];
   const accessibleName = `${label} la réservation ${booking.id}`;
-  function apply(): boolean {
-    try {
-      setError("");
-      actions.updateBookingStatus(booking.id, status);
-      return true;
-    } catch (cause) {
-      // The store also surfaces the message in the workspace banner; keep it next to the action too.
-      setError(cause instanceof Error ? cause.message : "Le statut n’a pas pu être modifié.");
-      return false;
-    }
+  function apply() {
+    setError("");
+    startTransition(async () => {
+      const result = await updateBookingStatusAction({ id: booking.id, status });
+      if (result.ok) setOpen(false);
+      else setError(result.error);
+    });
   }
   if (!confirm) {
     return <>
-      <button type="button" onClick={apply} aria-label={accessibleName}><Icon size={15} aria-hidden="true" />{label}</button>
+      <button type="button" onClick={apply} disabled={pending} aria-label={accessibleName}><Icon size={15} aria-hidden="true" />{pending ? "…" : label}</button>
       {error && <span role="alert" className="form-error">{error}</span>}
     </>;
   }
@@ -121,7 +119,7 @@ function StatusAction({ booking, status }: { booking: Booking; status: Exclude<B
         <DialogHeader><DialogTitle>{confirm.title}</DialogTitle><DialogDescription>{booking.packageName} · {booking.id}. {confirm.description}</DialogDescription></DialogHeader>
         {error && <p role="alert" className="notice notice-error" style={{ marginTop: 20, marginBottom: 0 }}>{error}</p>}
         <div className="dialog-actions">
-          <Button variant={status === "cancelled" ? "dark" : "default"} onClick={() => { if (apply()) setOpen(false); }}>{confirm.submit}</Button>
+          <Button variant={status === "cancelled" ? "dark" : "default"} onClick={apply} disabled={pending}>{pending ? "Enregistrement…" : confirm.submit}</Button>
           <DialogClose asChild><Button variant="secondary">Revenir</Button></DialogClose>
         </div>
       </DialogContent>

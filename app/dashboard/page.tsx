@@ -3,17 +3,16 @@
 import Link from "next/link";
 import { useState } from "react";
 import { ArrowRight, CalendarDays, CheckCheck, Clock3, Radio, Plus, CalendarClock } from "lucide-react";
-import { useDemo } from "@/components/demo/demo-provider";
-import { BookingTable } from "@/components/demo/booking-table";
+import { useWorkspace } from "@/components/workspace/workspace-provider";
+import { BookingTable } from "@/components/workspace/booking-table";
 import { Button } from "@/components/ui/button";
 import styles from "@/features/client/client.module.css";
 
 const dateLabel = (date: string, options: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat("fr-FR", { ...options, timeZone: "Africa/Lome" }).format(new Date(`${date}T12:00:00Z`));
 
 export default function ClientOverview() {
-  const { state, user } = useDemo();
+  const { state, user } = useWorkspace();
   const [now] = useState(() => Date.now());
-  if (!user || user.role !== "client") return null;
   const bookings = state.bookings.filter((booking) => booking.userId === user.id);
   const next = bookings.filter((booking) => booking.status === "pending" || booking.status === "confirmed").flatMap((booking) => booking.sessions.map((session) => ({ booking, session }))).filter(({ session }) => new Date(`${session.date}T${String(session.startHour).padStart(2, "0")}:00:00Z`).getTime() >= now).sort((a, b) => `${a.session.date}-${String(a.session.startHour).padStart(2, "0")}`.localeCompare(`${b.session.date}-${String(b.session.startHour).padStart(2, "0")}`))[0];
   const pendingSessions = bookings.filter((booking) => booking.status === "pending").reduce((total, booking) => total + booking.sessions.length, 0);

@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
-import { DemoProvider } from "@/components/demo/demo-provider";
-import { WorkspaceShell } from "@/components/demo/workspace-shell";
+import { WorkspaceGate } from "@/components/workspace/workspace-gate";
+
 export const metadata: Metadata = { title: "Administration", robots: { index: false, follow: false } };
-export default function AdminLayout({ children }: { children: React.ReactNode }) { return <DemoProvider><WorkspaceShell role="admin">{children}</WorkspaceShell></DemoProvider>; }
+// Per-user data: navigating here always waits for the session check on the server.
+export const instant = false;
+
+export default function AdminLayout({ children }: { children: React.ReactNode }) { return <WorkspaceGate role="admin">{children}</WorkspaceGate>; }

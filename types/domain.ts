@@ -52,16 +52,12 @@ export interface Notification {
   read: boolean;
   createdAt: string;
 }
-export interface DemoState {
-  version: 1;
+/** What the server sends to a signed-in browser. A client's copy only ever holds that client's own rows. */
+export interface WorkspaceState {
   users: User[];
   packages: PromotionPackage[];
   bookings: Booking[];
   notifications: Notification[];
-  sessionUserId: string | null;
-}
-export interface CreateBookingInput {
-  packageId: string;
-  mode: ParticipationMode;
-  sessions: SessionSelection[];
+  /** Upcoming occupied slots, anonymous, used to show availability. */
+  occupied: SessionSelection[];
 }

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ArrowUpRight, MapPin, Menu, X } from "lucide-react";
 import { Logo } from "./logo";
-import { FeatureNotice } from "@/components/marketing/feature-notice";
+import { BookingLink } from "@/components/marketing/booking-link";
 import styles from "./public-shell.module.css";
 
 const navigation = [
@@ -58,12 +58,12 @@ export function SiteHeader() {
             ))}
           </nav>
           <div className={styles.headerActions}>
-            <FeatureNotice kind="account" variant="ghost" size="sm">
+            <BookingLink kind="account" variant="ghost" size="sm">
               Connexion
-            </FeatureNotice>
-            <FeatureNotice size="sm">
+            </BookingLink>
+            <BookingLink size="sm">
               Réserver un live <ArrowUpRight size={16} aria-hidden="true" />
-            </FeatureNotice>
+            </BookingLink>
           </div>
           <button
             ref={toggleRef}
@@ -94,12 +94,12 @@ export function SiteHeader() {
               </Link>
             ))}
             <div className={styles.mobileActions}>
-              <FeatureNotice kind="account" variant="secondary">
+              <BookingLink kind="account" variant="secondary" onClick={() => setOpen(false)}>
                 Connexion
-              </FeatureNotice>
-              <FeatureNotice>
+              </BookingLink>
+              <BookingLink onClick={() => setOpen(false)}>
                 Réserver un live <ArrowUpRight size={16} />
-              </FeatureNotice>
+              </BookingLink>
             </div>
           </nav>
         )}

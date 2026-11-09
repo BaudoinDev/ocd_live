@@ -28,7 +28,7 @@
 .profile dt { font-size: 12px; color: var(--muted); margin-bottom: 3px; }
 .profile dd { margin: 0; font-size: 14px; }
 .wide { grid-column: 1 / -1; }
-.clientDialog { max-width: 920px; }
+.clientDialog { width: min(920px, calc(100% - 32px)); }
 .clientHistory { margin-top: 24px; border-top: 1px solid var(--line); padding-top: 22px; }
 .clientHistory h3 { font-size: 20px; margin-bottom: 16px; }
 .monthControls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }

@@ -1,16 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { useDemo } from "@/components/demo/demo-provider";
-import { BookingTable } from "@/components/demo/booking-table";
+import { useWorkspace } from "@/components/workspace/workspace-provider";
+import { BookingTable } from "@/components/workspace/booking-table";
 import styles from "./admin.module.css";
 
 export function AdminReservations() {
-  const { state, user } = useDemo();
+  const { state } = useWorkspace();
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("all");
   const [mode, setMode] = useState("all");
-  if (!user) return null;
   const query = search.trim().toLocaleLowerCase("fr");
   const bookings = state.bookings.filter((booking) => {
     const client = state.users.find((item) => item.id === booking.userId);

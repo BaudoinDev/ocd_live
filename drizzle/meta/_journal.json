@@ -15,6 +15,13 @@
       "when": 1794184349657,
       "tag": "0001_booking_slot_exclusion",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1794185700814,
+      "tag": "0002_rate_limits",
+      "breakpoints": true
     }
   ]
 }

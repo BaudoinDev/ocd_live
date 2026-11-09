@@ -1,18 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import { FormProvider, useForm, useFormContext, type Path } from "react-hook-form";
+import { FormProvider, useForm, useFormContext, type Path, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowRight, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import type { ProfileInput } from "@/types/demo";
-import { emptyProfile, profileSchema } from "./profile-schema";
+import type { ActionResult } from "@/lib/action-result";
+import type { ProfileInput } from "@/types/domain";
+import { emptyProfile, profileSchema, registrationSchema, type RegistrationInput } from "./profile-schema";
 import styles from "./auth.module.css";
 
-type FieldProps = { name: Path<ProfileInput>; label: string; type?: string; autoComplete?: string; placeholder?: string; multiline?: boolean; optional?: boolean; hint?: string };
+type FieldProps = { name: Path<RegistrationInput>; label: string; type?: string; autoComplete?: string; placeholder?: string; multiline?: boolean; optional?: boolean; hint?: string };
 
 function ProfileField({ name, label, type = "text", autoComplete, placeholder, multiline, optional, hint }: FieldProps) {
-  const { register, getFieldState, formState } = useFormContext<ProfileInput>();
+  const { register, getFieldState, formState } = useFormContext<RegistrationInput>();
   const { error } = getFieldState(name, formState);
   const id = `profile-${name.replaceAll(".", "-")}`;
   const describedBy = [error ? `${id}-error` : "", hint ? `${id}-hint` : ""].filter(Boolean).join(" ") || undefined;
@@ -25,22 +26,21 @@ function ProfileField({ name, label, type = "text", autoComplete, placeholder, m
   </div>;
 }
 
-export function ProfileForm({ initialValues = emptyProfile, onSave, registration = false }: { initialValues?: ProfileInput; onSave: (values: ProfileInput) => void; registration?: boolean }) {
-  const form = useForm<ProfileInput>({ resolver: zodResolver(profileSchema), defaultValues: initialValues, mode: "onTouched" });
+/** On success, registration redirects from the server, so `onSave` only returns for failures or profile edits. */
+export function ProfileForm({ initialValues = emptyProfile, onSave, registration = false }: { initialValues?: ProfileInput; onSave: (values: RegistrationInput) => Promise<ActionResult>; registration?: boolean }) {
+  const schema = registration ? registrationSchema : profileSchema;
+  const form = useForm<RegistrationInput>({ resolver: zodResolver(schema) as unknown as Resolver<RegistrationInput>, defaultValues: { ...initialValues, password: "", passwordConfirm: "" }, mode: "onTouched" });
   const [message, setMessage] = useState("");
   const [submitError, setSubmitError] = useState("");
-  const submit = form.handleSubmit((values) => {
+  const submit = form.handleSubmit(async (values) => {
     setSubmitError("");
     setMessage("");
-    try {
-      onSave(values);
-      if (!registration) setMessage("Votre profil a bien été enregistré dans ce navigateur.");
-    } catch (error) {
-      setSubmitError(error instanceof Error ? error.message : "Impossible d’enregistrer le profil. Réessayez.");
-    }
+    const result = await onSave(values);
+    if (!result.ok) setSubmitError(result.error);
+    else if (!registration) setMessage("Votre profil a bien été enregistré.");
   });
   return <FormProvider {...form}>
-    <form onSubmit={submit} noValidate className={styles.profileForm}>
+    <form method="post" onSubmit={submit} noValidate className={styles.profileForm}>
       <fieldset className={styles.fieldset}>
         <legend className={styles.legend}><span>01</span> Vos coordonnées</legend>
         <div className="form-grid">
@@ -62,11 +62,18 @@ export function ProfileForm({ initialValues = emptyProfile, onSave, registration
           <ProfileField name="business.tiktok" label="Nom d’utilisateur TikTok" optional placeholder="@monentreprise" hint="Utile pour préparer une participation à distance." />
         </div>
       </fieldset>
+      {registration && <fieldset className={styles.fieldset}>
+        <legend className={styles.legend}><span>03</span> Votre mot de passe</legend>
+        <div className="form-grid">
+          <ProfileField name="password" label="Mot de passe" type="password" autoComplete="new-password" hint="10 caractères minimum." />
+          <ProfileField name="passwordConfirm" label="Confirmez le mot de passe" type="password" autoComplete="new-password" />
+        </div>
+      </fieldset>}
       {submitError && <div role="alert" className="notice notice-error">{submitError}</div>}
       {message && <div role="status" className="notice notice-success"><Check size={18} aria-hidden="true" /> {message}</div>}
       <div className={`form-actions ${styles.formActions}`}>
-        <p className="form-hint">{registration ? "Tous les champs sont requis, sauf le nom TikTok. Données enregistrées uniquement dans ce navigateur." : "Les modifications s’appliquent à votre profil de démonstration."}</p>
-        <Button type="submit" disabled={form.formState.isSubmitting}>{form.formState.isSubmitting ? "Enregistrement…" : registration ? "Créer mon compte démo" : "Enregistrer les modifications"}<ArrowRight size={17} aria-hidden="true" /></Button>
+        {registration && <p className="form-hint">Tous les champs sont requis, sauf le nom TikTok.</p>}
+        <Button type="submit" disabled={form.formState.isSubmitting}>{form.formState.isSubmitting ? "Enregistrement…" : registration ? "Créer mon compte" : "Enregistrer les modifications"}<ArrowRight size={17} aria-hidden="true" /></Button>
       </div>
     </form>
   </FormProvider>;
