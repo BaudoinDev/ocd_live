@@ -249,6 +249,17 @@ test.describe("booking", () => {
     await expect(page.locator(`#booking-${reference}`)).toContainText("En attente");
   });
 
+  test("after a booking, returning to the page offers a fresh form", async ({ page }) => {
+    await login(page, DEV_SECOND_CLIENT_EMAIL);
+    await pickFirstSlot(page, /Découverte/);
+    await submitBooking(page);
+    await page.getByRole("link", { name: "Voir mes réservations" }).click();
+    await expect(page).toHaveURL(/\/dashboard\/reservations$/);
+    await page.getByRole("navigation", { name: "Navigation client" }).getByRole("link", { name: "Réserver un live" }).click();
+    await expect(page.getByRole("radio", { name: /Découverte/ })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Votre réservation est enregistrée." })).toHaveCount(0);
+  });
+
   test("a multi-session offer needs all its slots before it can be sent", async ({ page }) => {
     await login(page, DEV_SECOND_CLIENT_EMAIL);
     await pickFirstSlot(page, /Semaine Starter/);

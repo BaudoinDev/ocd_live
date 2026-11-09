@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowRight, CalendarCheck, ChevronLeft, ChevronRight, MapPin, Video, X } from "lucide-react";
@@ -44,6 +44,8 @@ export function BookingWizard() {
   const paymentButton = useRef<HTMLButtonElement>(null);
   const [paymentOpen, setPaymentOpen] = useState(false);
   const [chosenMethod, setChosenMethod] = useState<PaymentMethod | null>(null);
+  // Next.js keeps visited pages alive between navigations: leaving must clear the confirmation, or it would replace the form on return.
+  useEffect(() => () => setReference(null), []);
 
   const byId = (id: string | null) => state.packages.find((item) => item.id === id);
   const offer: PromotionPackage | undefined = byId(pickedId) ?? byId(query.get("forfait")) ?? state.packages.find((item) => item.recommended) ?? state.packages[0];
@@ -52,7 +54,7 @@ export function BookingWizard() {
     <span className={styles.doneIcon}><CalendarCheck size={30} aria-hidden="true" /></span>
     <h1 id="booking-done">Votre réservation est enregistrée.</h1>
     <p>Référence <strong>{reference}</strong>. Paiement validé{chosenMethod ? ` par ${paymentLabels[chosenMethod]}` : ""}. L’équipe OCD a été alertée.</p>
-    <div className="dialog-actions"><Button asChild><Link href="/dashboard/reservations">Voir mes réservations<ArrowRight size={17} aria-hidden="true" /></Link></Button></div>
+    <div className="dialog-actions"><Button asChild><Link href="/dashboard/reservations">Voir mes réservations<ArrowRight size={17} aria-hidden="true" /></Link></Button><Button variant="secondary" onClick={() => setReference(null)}>Réserver un autre live</Button></div>
   </section>;
   if (!offer) return <p className="empty-state">Aucun forfait n’est disponible pour le moment.</p>;
 
@@ -83,7 +85,7 @@ export function BookingWizard() {
     setError("");
     startSubmit(async () => {
       const result = await createBookingAction({ packageId: offer!.id, mode, sessions, paymentMethod });
-      if (result.ok) setReference(result.value.id);
+      if (result.ok) { setReference(result.value.id); setSessions([]); setActiveDay(null); setMode(null); setPickedId(null); setPaymentOpen(false); }
       else { setError(result.error); setPaymentOpen(false); router.refresh(); }
     });
   }
