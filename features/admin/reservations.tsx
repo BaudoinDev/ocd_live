@@ -1,16 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { useDemo } from "@/components/demo/demo-provider";
-import { BookingTable } from "@/components/demo/booking-table";
+import { useWorkspace } from "@/components/workspace/workspace-provider";
+import { BookingTable } from "@/components/workspace/booking-table";
 import styles from "./admin.module.css";
 
 export function AdminReservations() {
-  const { state, user } = useDemo();
+  const { state } = useWorkspace();
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("all");
   const [mode, setMode] = useState("all");
-  if (!user) return null;
   const query = search.trim().toLocaleLowerCase("fr");
   const bookings = state.bookings.filter((booking) => {
     const client = state.users.find((item) => item.id === booking.userId);
@@ -23,7 +22,7 @@ export function AdminReservations() {
       <div className={`form-field ${styles.search}`}><label htmlFor="booking-search">Rechercher une réservation</label><input id="booking-search" type="search" className="field-input" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Client, entreprise, forfait, référence…" /></div>
       <div className={`form-field ${styles.select}`}><label htmlFor="booking-status">Statut</label><select id="booking-status" className="field-input" value={status} onChange={(event) => setStatus(event.target.value)}><option value="all">Tous les statuts</option><option value="pending">En attente</option><option value="confirmed">Confirmées</option><option value="completed">Terminées</option><option value="cancelled">Annulées</option></select></div>
       <div className={`form-field ${styles.select}`}><label htmlFor="booking-mode">Participation</label><select id="booking-mode" className="field-input" value={mode} onChange={(event) => setMode(event.target.value)}><option value="all">Tous les modes</option><option value="agency">À l’agence</option><option value="remote">À distance</option></select></div>
-    </div><p className={styles.resultCount} role="status">{bookings.length} réservation{bookings.length > 1 ? "s" : ""} affichée{bookings.length > 1 ? "s" : ""}</p><BookingTable bookings={bookings} admin />
+    </div><p className={styles.resultCount} role="status">{bookings.length} réservation{bookings.length > 1 ? "s" : ""} affichée{bookings.length > 1 ? "s" : ""}</p><BookingTable bookings={bookings} admin emptyMessage={state.bookings.length ? "Aucune réservation ne correspond à ces filtres." : "Aucune réservation pour le moment."} />
     </section>
   </div>;
 }

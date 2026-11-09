@@ -20,7 +20,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.13em;
   color: var(--muted);
@@ -86,7 +86,7 @@
   align-items: center;
   gap: 11px;
   min-height: 48px;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 500;
   border-bottom: 1px solid var(--line);
 }
@@ -99,7 +99,7 @@
   gap: 18px;
   margin-top: 24px;
   color: var(--muted);
-  font-size: 12px;
+  font-size: 14px;
 }
 .modeBadges span {
   display: flex;
@@ -161,7 +161,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  font-size: 10px;
+  font-size: 13px;
   color: var(--bg);
   text-shadow: 0 1px 5px rgb(17 17 17 / 50%);
 }
@@ -172,7 +172,7 @@
   background: var(--brand-dark);
   color: var(--bg);
   padding: 5px 10px;
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 700;
   border-radius: 4px;
   text-shadow: none;
@@ -194,7 +194,7 @@
   background: linear-gradient(transparent, rgb(17 17 17 / 90%));
 }
 .liveCaption > span {
-  font-size: 8px;
+  font-size: 12px;
   letter-spacing: 0.12em;
 }
 .liveCaption > p {
@@ -216,13 +216,13 @@
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  font-size: 9px;
+  font-size: 12px;
 }
 .imageCaption {
   position: absolute;
   bottom: -48px;
   left: 0;
-  font-size: 10px;
+  font-size: 13px;
   color: var(--muted);
   letter-spacing: 0.02em;
 }
@@ -251,12 +251,12 @@
   color: var(--brand-dark);
 }
 .floatingTop > div {
-  font-size: 9px;
+  font-size: 12px;
   color: var(--muted);
 }
 .floatingTop strong {
   display: block;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--ink);
   margin-top: 2px;
@@ -290,7 +290,7 @@
   place-items: center;
 }
 .floatingBottom > div {
-  font-size: 11px;
+  font-size: 13px;
   color: var(--muted);
 }
 .floatingBottom strong {
@@ -328,7 +328,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 9px;
+  font-size: 12px;
   color: var(--muted);
   line-height: 1.6;
 }
@@ -344,14 +344,14 @@
   align-items: center;
   justify-content: space-between;
   border-top: 1px solid var(--line);
-  font-size: 9px;
+  font-size: 12px;
   color: var(--muted);
 }
 .heroFoot > a {
   display: flex;
   gap: 10px;
   align-items: center;
-  font-size: 8px;
+  font-size: 12px;
   letter-spacing: 0.1em;
   min-height: 44px;
 }
@@ -368,7 +368,7 @@
   gap: 58px;
 }
 .audienceInner > p {
-  font-size: 10px;
+  font-size: 13px;
   color: var(--muted);
   line-height: 1.8;
   flex-shrink: 0;
@@ -448,7 +448,7 @@
   color: var(--brand);
 }
 .editorialNote > p {
-  font-size: 10px;
+  font-size: 13px;
   line-height: 1.8;
   color: var(--muted);
 }
@@ -484,7 +484,7 @@
 }
 .rowNumber {
   color: var(--muted);
-  font-size: 9px;
+  font-size: 12px;
 }
 .benefitRow h3 {
   font-size: 22px;
@@ -563,7 +563,7 @@
   margin-top: 40px;
 }
 .processCta > span {
-  font-size: 10px;
+  font-size: 13px;
   color: var(--muted);
 }
 .pricing {
@@ -590,7 +590,7 @@
 }
 .priceNote {
   color: var(--muted);
-  font-size: 11px;
+  font-size: 13px;
   text-align: center;
   margin-top: 24px;
 }
@@ -634,7 +634,7 @@
   display: flex;
   gap: 8px;
   align-items: center;
-  font-size: 9px;
+  font-size: 12px;
   letter-spacing: 0.1em;
   margin-top: 35px;
   opacity: 0.75;
@@ -677,7 +677,7 @@
   align-items: center;
   gap: 8px;
   margin-top: 27px;
-  font-size: 10px;
+  font-size: 13px;
   color: var(--muted);
 }
 .faqNote svg {
@@ -719,7 +719,7 @@
   align-items: center;
   gap: 7px;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 13px;
 }
 .contactDecor {
   position: absolute;
@@ -730,7 +730,7 @@
   transform: rotate(5deg);
 }
 .contact .contactNote {
-  font-size: 10px;
+  font-size: 13px;
   color: var(--muted);
   max-width: 650px;
   margin-top: 26px;
@@ -756,7 +756,7 @@
     gap: 16px;
   }
   .heroActions button {
-    font-size: 13px;
+    font-size: 15px;
     padding-inline: 17px;
   }
   .audienceInner {
@@ -786,7 +786,7 @@
     font-size: 16px;
   }
   .heroEyebrow {
-    font-size: 8px;
+    font-size: 12px;
   }
   .heroVisual {
     transform: scale(0.77);
@@ -797,7 +797,7 @@
   }
   .modeBadges {
     gap: 12px;
-    font-size: 12px;
+    font-size: 14px;
     flex-wrap: wrap;
   }
   .heroArrow {
@@ -852,7 +852,7 @@
     padding-bottom: 0;
   }
   .heroEyebrow {
-    font-size: 9px;
+    font-size: 12px;
     margin-bottom: 23px;
   }
   .heroDescription {
@@ -869,7 +869,7 @@
     padding-inline: 18px;
   }
   .modeBadges {
-    font-size: 12px;
+    font-size: 14px;
     gap: 18px;
     margin-top: 20px;
   }
@@ -1044,7 +1044,7 @@
     margin-top: 25px;
   }
   .contactActions > span {
-    font-size: 10px;
+    font-size: 13px;
     line-height: 1.6;
   }
 }
@@ -1064,21 +1064,40 @@
     gap: 13px;
   }
   .heroActions button {
-    font-size: 13px;
+    font-size: 15px;
     padding-inline: 14px;
   }
   .heroSecondary {
-    font-size: 12px;
+    font-size: 14px;
     gap: 7px;
   }
   .heroEyebrow {
-    font-size: 8px;
+    font-size: 12px;
   }
   .modeBadges {
     gap: 14px;
-    font-size: 12px;
+    font-size: 14px;
   }
   .contact h2 {
     font-size: 32px;
+  }
+}
+
+/* Very narrow phones: the long brand line and the floating hero cards must stay inside the screen. */
+@media (max-width: 400px) {
+  .aboutGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .aboutMark {
+    padding: 26px;
+  }
+  .aboutMark > span {
+    font-size: 29px;
+  }
+}
+@media (max-width: 350px) {
+  .heroVisual {
+    transform: scale(0.66);
+    height: 420px;
   }
 }

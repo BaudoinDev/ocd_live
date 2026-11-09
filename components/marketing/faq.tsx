@@ -23,9 +23,9 @@ export const questions = [
       "Commencez par une séance Découverte pour présenter l’essentiel. Boost et Business vous donnent davantage de temps pour vos démonstrations. Les forfaits semaine et mensuel permettent de répartir votre présence sur plusieurs séances.",
   },
   {
-    question: "Peut-on déjà réserver et payer sur ce site ?",
+    question: "Peut-on réserver et payer sur ce site ?",
     answer:
-      "Ce site est un prototype de présentation. Vous pouvez explorer les offres, mais la réservation, les comptes clients et les paiements ne sont pas encore actifs. Les prix affichés sont des hypothèses de démonstration, à valider par l’agence.",
+      "Vous pouvez créer un compte et réserver un créneau en ligne. Le paiement ne se fait pas sur ce site : l’équipe OCD vous recontacte pour confirmer. Les prix affichés sont provisoires, à valider par l’agence.",
   },
   {
     question: "Le live garantit-il des ventes ?",

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+// Shared styles for the client and admin workspaces. Kept in the root layout so CSS order stays deterministic across navigations.
+import "./workspace.css";
 
 const outfit = localFont({
   src: "../public/fonts/Outfit-VariableFont_wght.ttf",
@@ -24,7 +26,7 @@ export const metadata: Metadata = {
   description:
     "Donnez de la visibilité à votre entreprise avec les promotions TikTok Live d’OCD. À l’agence de Lomé ou à distance, mettez votre activité au premier plan.",
   applicationName: "OCD Live",
-  icons: { icon: "/images/Orange%20OCD%20Live%20Logo.png" },
+  icons: { icon: "/images/ocd-icon.png" },
   openGraph: {
     locale: "fr_FR",
     type: "website",

@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Check, MapPin, Plus, Video } from "lucide-react";
-import { PackageGrid } from "@/components/marketing/package-grid";
+import { PackageCatalog } from "@/components/marketing/package-catalog";
 import styles from "./forfaits.module.css";
 
 export const metadata: Metadata = {
   title: "Forfaits de promotion TikTok Live",
   description:
-    "Découvrez les six forfaits OCD Live pour présenter vos produits et services sur TikTok Live, à Lomé ou à distance. Tarifs provisoires de démonstration.",
+    "Découvrez les six forfaits OCD Live pour présenter vos produits et services sur TikTok Live, à Lomé ou à distance.",
 };
 
 const questions = [
@@ -29,12 +29,12 @@ const questions = [
   {
     question: "Ces tarifs sont-ils définitifs ?",
     answer:
-      "Non. Tous les prix affichés sont des hypothèses commerciales pour cette démonstration. Les tarifs, les disponibilités et les modalités devront être confirmés par l’agence OCD avant tout engagement.",
+      "Non. Les prix affichés sont provisoires. L’équipe OCD confirme le tarif et les modalités avec vous avant tout engagement.",
   },
   {
     question: "Puis-je réserver et payer sur ce site ?",
     answer:
-      "Ce site de démonstration vous permet de découvrir les offres et les modes de participation. La réservation en ligne est prévue prochainement. Aucun paiement ni aucune demande de réservation ne sont enregistrés sur ce site.",
+      "Vous pouvez créer un compte et réserver votre créneau en ligne. Le paiement ne se fait pas sur ce site : l’équipe OCD vous recontacte pour confirmer votre réservation.",
   },
 ];
 
@@ -73,10 +73,9 @@ export default function PackagesPage() {
             <p>Votre activité mérite d’être vue.</p>
             <span>Six formats. Deux façons de participer.</span>
           </div>
-          <PackageGrid />
+          <PackageCatalog />
           <p className={styles.disclaimer}>
-            Tous les prix sont exprimés en FCFA. Tarifs provisoires de
-            démonstration, soumis à validation par l’agence OCD.
+            Tous les prix sont exprimés en FCFA. Tarifs provisoires, soumis à validation par l’agence OCD.
           </p>
         </div>
       </section>

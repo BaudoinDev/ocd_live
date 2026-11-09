@@ -16,7 +16,7 @@ const test = base.extend<{ runtimeErrors: string[] }>({
   ],
 });
 
-for (const width of [375, 768, 1440]) {
+for (const width of [320, 375, 768, 1024, 1440, 1920]) {
   for (const route of ["/", "/forfaits"]) {
     test(`${route} fits a ${width}px viewport and loads the supplied logo`, async ({
       page,
@@ -58,7 +58,7 @@ for (const width of [375, 768, 1440]) {
           }),
         )
         .toBe(true);
-      await expect(logo).toHaveAttribute("src", /Orange/);
+      await expect(logo).toHaveAttribute("src", /ocd-logo/);
 
       const dimensions = await page.evaluate(() => ({
         viewport: document.documentElement.clientWidth,
@@ -173,28 +173,16 @@ test("FAQ uses a keyboard-operable native disclosure", async ({ page }) => {
   await expect(disclosure.locator("p")).not.toBeVisible();
 });
 
-test("booking and account notices close with Escape and return focus", async ({
-  page,
-}) => {
+test("calls to action lead to the real login page", async ({ page }) => {
   await page.goto("/");
-  for (const name of ["Réserver un live", "Connexion"]) {
-    const trigger = page
-      .locator("header")
-      .getByRole("button", { name, exact: true });
-    await trigger.click();
-    const dialog = page.getByRole("dialog");
-    await expect(dialog).toBeVisible();
-    await expect(dialog).toContainText("démonstration");
-    await expect(
-      dialog.getByRole("button", { name: "Fermer la fenêtre" }),
-    ).toBeVisible();
-    await page.keyboard.press("Escape");
-    await expect(dialog).not.toBeVisible();
-    await expect(trigger).toBeFocused();
-  }
+  await page.locator("header").getByRole("link", { name: "Connexion", exact: true }).click();
+  await expect(page).toHaveURL(/\/connexion$/);
+  await page.goto("/");
+  await page.locator("header").getByRole("link", { name: "Réserver un live" }).click();
+  await expect(page).toHaveURL(/\/connexion\?next=%2Fdashboard%2Freserver$/);
 });
 
-test("six offers show the Boost price and close the dialog when visiting contact", async ({
+test("six offers show the Boost price and lead to booking that offer", async ({
   page,
 }) => {
   await page.goto("/forfaits");
@@ -221,10 +209,6 @@ test("six offers show the Boost price and close the dialog when visiting contact
   await expect(dialog).toBeVisible();
   await expect(dialog).toContainText(/25\s*000\s*FCFA/);
   await expect(dialog).toContainText("3 heures");
-  await dialog
-    .getByRole("link", { name: "Voir les informations de contact" })
-    .click();
-  await expect(page).toHaveURL(/\/#contact$/);
-  await expect(dialog).not.toBeVisible();
-  await expect(page.locator("#contact")).toBeInViewport();
+  await dialog.getByRole("link", { name: "Réserver ce forfait" }).click();
+  await expect(page).toHaveURL(/\/connexion\?next=%2Fdashboard%2Freserver%3Fforfait%3Dboost$/);
 });

@@ -10,7 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { formatPrice, packages, type PromotionPackage } from "@/lib/packages";
+import { formatPrice, type PromotionPackage } from "@/lib/packages";
 import styles from "./package-grid.module.css";
 
 function PackageDetails({ offer }: { offer: PromotionPackage }) {
@@ -30,27 +30,23 @@ function PackageDetails({ offer }: { offer: PromotionPackage }) {
         {formatPrice(offer.price)} <span>FCFA</span>
       </div>
       <p className={styles.dialogNote}>
-        Tarif provisoire de démonstration, à confirmer auprès de l’équipe OCD
-        Live.
+        Tarif provisoire, confirmé par l’équipe OCD avec votre réservation.
       </p>
       <div className={styles.bookingNotice}>
         <Radio size={21} aria-hidden="true" />
         <p>
-          <strong>Préparons votre prise de parole.</strong>La réservation en
-          ligne est prévue prochainement. Découvrez nos offres et choisissez le
-          mode de participation qui vous convient.
+          <strong>Préparons votre prise de parole.</strong>Choisissez votre mode de participation et un créneau libre : il vous suffit d’un compte OCD Live.
         </p>
       </div>
-      <Link className="button button-primary" href="/#contact">
-        Voir les informations de contact{" "}
+      <Link className="button button-primary" href={`/dashboard/reserver?forfait=${encodeURIComponent(offer.id)}`}> Réserver ce forfait{" "}
         <ArrowRight size={17} aria-hidden="true" />
       </Link>
     </DialogContent>
   );
 }
 
-export function PackageGrid({ compact = false }: { compact?: boolean }) {
-  const offers = compact ? packages.slice(0, 3) : packages;
+export function PackageGrid({ offers: catalog, compact = false }: { offers: readonly PromotionPackage[]; compact?: boolean }) {
+  const offers = compact ? catalog.slice(0, 3) : catalog;
 
   return (
     <div className={styles.grid}>
@@ -76,7 +72,7 @@ export function PackageGrid({ compact = false }: { compact?: boolean }) {
           <p className={styles.price}>
             {formatPrice(offer.price)} <span>FCFA</span>
           </p>
-          <p className={styles.priceNote}>Tarif provisoire · démonstration</p>
+          <p className={styles.priceNote}>Tarif provisoire</p>
           <div className={styles.sessionInfo}>
             <span>
               <Clock3 size={15} aria-hidden="true" />

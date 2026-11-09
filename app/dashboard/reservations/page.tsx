@@ -3,16 +3,15 @@
 import { useState } from "react";
 import Link from "next/link";
 import { CalendarDays, Plus } from "lucide-react";
-import { useDemo } from "@/components/demo/demo-provider";
-import { BookingTable } from "@/components/demo/booking-table";
+import { useWorkspace } from "@/components/workspace/workspace-provider";
+import { BookingTable } from "@/components/workspace/booking-table";
 import { Button } from "@/components/ui/button";
 import styles from "@/features/client/client.module.css";
 
 export default function ClientBookings() {
-  const { state, user } = useDemo();
+  const { state, user } = useWorkspace();
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState("all");
-  if (!user || user.role !== "client") return null;
   const allBookings = state.bookings.filter((booking) => booking.userId === user.id);
   const bookings = allBookings.filter((booking) => (status === "all" || booking.status === status) && `${booking.packageName} ${booking.id} ${booking.sessions.map((session) => session.date).join(" ")}`.toLocaleLowerCase("fr").includes(query.toLocaleLowerCase("fr"))).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
   return <>

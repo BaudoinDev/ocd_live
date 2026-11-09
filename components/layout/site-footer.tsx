@@ -50,7 +50,7 @@ export function SiteFooter() {
         </div>
         <div className={styles.footerBottom}>
           <span>© OCD Live · Les Opportunités C’est Dehors</span>
-          <span>Prototype de démonstration · Tarifs indicatifs</span>
+          <span>Tarifs indicatifs · Aucun paiement en ligne</span>
           <span>Fait pour les entrepreneurs.</span>
         </div>
       </div>
